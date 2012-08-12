@@ -1,0 +1,52 @@
+name: BookManager
+version: 0.1
+main: com.LRFLEW.bukkit.book.Plugin
+author: LRFLEW
+description: Allows players to edit their Written Books
+
+commands:
+  unsign:
+    description: Unsigns Written Books
+    aliases: us
+    permission: bookmanager.unsign
+    usage: "Hold a Written Book and use: /<command>"
+    permission-message: You don't have permission to unsign books
+  rnbook:
+    description: Renames Written Books
+    aliases: rb
+    permission: bookmanager.rnbook
+    usage: "Hold a Written Book and use: /<command> <name>"
+    permission-message: You don't have permission to rename books
+  rnauth:
+    description: Changes the Author Name for Written Books
+    aliases: ra
+    permission: bookmanager.rnauth
+    usage: "Hold a Written Book and use: /<command> <name>"
+    permission-message: You don't have permission to change the author name of books
+
+permissions:
+  bookmanager:
+    description: allows player to use all the commands avaiable in BookManager
+    children:
+      bookmanager.unsign.other: true
+      bookmanager.rnbook.other: true
+      bookmanager.rnauth: true
+  bookmanager.unsign:
+    description: allows player to use /unsign on their own books
+    default: true
+  bookmanager.unsign.other:
+    description: allows player to use /unsign on other player's books
+    default: op
+    children:
+      bookmanager.unsign: true
+  bookmanager.rnbook:
+    description: allows player to use /rnbook on their own books
+    default: true
+  bookmanager.rnbook.other:
+    description: allows player to use /rnbook on other player's books
+    default: op
+    children:
+      bookmanager.rnbook: true
+  bookmanager.rnauth:
+    description: allows player to use /rnauth
+    default: op
