@@ -25,12 +25,6 @@ commands:
     permission-message: You don't have permission to change the author name of books
 
 permissions:
-  bookmanager:
-    description: allows player to use all the commands avaiable in BookManager
-    children:
-      bookmanager.unsign.other: true
-      bookmanager.rnbook.other: true
-      bookmanager.rnauth: true
   bookmanager.unsign:
     description: allows player to use /unsign on their own books
     default: true
@@ -50,3 +44,25 @@ permissions:
   bookmanager.rnauth:
     description: allows player to use /rnauth
     default: op
+  bookmanager.none:
+    description: removes all permissions from player for BookManager
+    children:
+      bookmanager.unsign: false
+      bookmanager.unsign.other: false
+      bookmanager.rnbook: false
+      bookmanager.rnbook.other: false
+      bookmanager.rnauth: false
+  bookmanager.default:
+    description: gives player control over their own books only
+    children:
+      bookmanager.unsign: true
+      bookmanager.unsign.other: false
+      bookmanager.rnbook: true
+      bookmanager.rnbook.other: false
+      bookmanager.rnauth: false
+  bookmanager.admin:
+    description: gives player control over any book
+    children:
+      bookmanager.unsign.other: true
+      bookmanager.rnbook.other: true
+      bookmanager.rnauth: true
