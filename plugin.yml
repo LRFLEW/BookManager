@@ -1,5 +1,5 @@
 name: BookManager
-version: 0.1
+version: 0.2
 main: com.LRFLEW.bukkit.book.Plugin
 author: LRFLEW
 description: Allows players to edit their Written Books
@@ -23,6 +23,18 @@ commands:
     permission: bookmanager.rnauth
     usage: "Hold a Written Book and use: /<command> <name>"
     permission-message: You don't have permission to change the author name of books
+  copybook:
+    description: Copies Written Books
+    aliases: cb
+    permission: bookmanager.copy
+    usage: "Hold a Written Book and use: /<command> [amount]"
+    permission-message: You don't have permission to copy books
+  savetxt:
+    description: Saves Written Books as .txt files in the plugin folder
+    aliases: st
+    permission: bookmanager.savetxt
+    usage: "Hold a Written Book and use: /<command>"
+    permission-message: You don't have permission to use that command
 
 permissions:
   bookmanager.unsign:
@@ -44,6 +56,18 @@ permissions:
   bookmanager.rnauth:
     description: allows player to use /rnauth
     default: op
+  bookmanager.copy:
+    description: allows player to use /copybook
+    default: true
+  bookmanager.copy.free:
+    description: allows player to use /copybook without extra materials
+    default: op
+    children:
+      bookmanager.copy: true
+  bookmanager.savetxt:
+    description: allows player to use /savetxt
+    default: op
+    
   bookmanager.none:
     description: removes all permissions from player for BookManager
     children:
@@ -52,6 +76,9 @@ permissions:
       bookmanager.rnbook: false
       bookmanager.rnbook.other: false
       bookmanager.rnauth: false
+      bookmanager.copy: false
+      bookmanager.copy.free: false
+      bookmanager.savetxt: false
   bookmanager.default:
     description: gives player control over their own books only
     children:
@@ -60,9 +87,14 @@ permissions:
       bookmanager.rnbook: true
       bookmanager.rnbook.other: false
       bookmanager.rnauth: false
+      bookmanager.copy: true
+      bookmanager.copy.free: false
+      bookmanager.savetxt: false
   bookmanager.admin:
     description: gives player control over any book
     children:
       bookmanager.unsign.other: true
       bookmanager.rnbook.other: true
       bookmanager.rnauth: true
+      bookmanager.copy.free: true
+      bookmanager.savetxt: true
