@@ -1,5 +1,5 @@
 name: BookManager
-version: 0.2
+version: 0.3
 main: com.LRFLEW.bukkit.book.Plugin
 author: LRFLEW
 description: Allows players to edit their Written Books
@@ -29,11 +29,28 @@ commands:
     permission: bookmanager.copy
     usage: "Hold a Written Book and use: /<command> [amount]"
     permission-message: You don't have permission to copy books
-  savetxt:
-    description: Saves Written Books as .txt files in the plugin folder
+  savebook:
+    description: Saves Written Books in the plugin folder
     aliases: st
-    permission: bookmanager.savetxt
-    usage: "Hold a Written Book and use: /<command>"
+    permission: bookmanager.savebook
+    usage: "Hold a Written Book and use: /<command> <save name>"
+    permission-message: You don't have permission to use that command
+  loadbook:
+    description: Loads Written Books in the plugin folder
+    aliases: lb
+    permission: bookmanager.loadbook
+    usage: "usage: /<command> <save name>"
+    permission-message: You don't have permission to use that command
+  deletebook:
+    description: Deletes a saved book
+    permission: bookmanager.deletebook
+    usage: "usage: /<command> <save name>"
+    permission-message: You don't have permission to use that command
+  listbooks:
+    description: Lists all saved books you can access
+    aliases: ltb
+    permission: bookmanager.listbooks
+    usage: "usage: /<command>"
     permission-message: You don't have permission to use that command
 
 permissions:
@@ -64,9 +81,28 @@ permissions:
     default: op
     children:
       bookmanager.copy: true
-  bookmanager.savetxt:
-    description: allows player to use /savetxt
+  bookmanager.savebook:
+    description: allows player to use /savebook
     default: op
+  bookmanager.loadbook:
+    description: allows player to use /loadbook
+    default: true
+  bookmanager.loadbook.free:
+    description: allows player to use /loadbook free
+    default: op
+    children:
+      bookmanager.loadbook: true
+  bookmanager.loadbook.all:
+    description: allows player to use /loadbook on all saved books
+    default: op
+    children:
+      bookmanager.loadbook: true
+  bookmanager.deletebook:
+    description: allows player to use /deletebook
+    default: op
+  bookmanager.listbooks:
+    description: allows player to use /listbooks
+    default: true
     
   bookmanager.none:
     description: removes all permissions from player for BookManager
@@ -78,7 +114,12 @@ permissions:
       bookmanager.rnauth: false
       bookmanager.copy: false
       bookmanager.copy.free: false
-      bookmanager.savetxt: false
+      bookmanager.savebook: false
+      bookmanager.loadbook: false
+      bookmanager.loadbook.free: false
+      bookmanager.loadbook.all: false
+      bookmanager.deletebook: false
+      bookmanager.listbooks: false
   bookmanager.default:
     description: gives player control over their own books only
     children:
@@ -89,7 +130,12 @@ permissions:
       bookmanager.rnauth: false
       bookmanager.copy: true
       bookmanager.copy.free: false
-      bookmanager.savetxt: false
+      bookmanager.savebook: false
+      bookmanager.loadbook: true
+      bookmanager.loadbook.free: false
+      bookmanager.loadbook.all: false
+      bookmanager.deletebook: false
+      bookmanager.listbooks: true
   bookmanager.admin:
     description: gives player control over any book
     children:
@@ -97,4 +143,10 @@ permissions:
       bookmanager.rnbook.other: true
       bookmanager.rnauth: true
       bookmanager.copy.free: true
-      bookmanager.savetxt: true
+      bookmanager.savebook: true
+      bookmanager.loadbook.free: true
+      bookmanager.loadbook.all: true
+      bookmanager.deletebook: true
+      bookmanager.listbooks: true
+      bookmanager.deletebook: true
+      bookmanager.listbooks: true
