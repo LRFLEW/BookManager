@@ -21,8 +21,8 @@ public class BookMakeUse {
 			if (hasItems(inv, amount, cost)) {
 				for (int i=0; i < amount; i++) inv.removeItem(cost);
 			} else {
-				player.sendMessage("You need a book, ink sack, " +
-						"and a feather");
+				player.sendMessage("You need " + amount + " book(s), " + amount + " ink sack(s), " +
+						"and " + amount + " feather(s)");
 				return true;
 			}
 		}
@@ -48,16 +48,16 @@ public class BookMakeUse {
                     int amount = itemStack.getAmount();
 
                     if (amount < toDelete) {
-                        toDelete -= amount;
+                        return false;
                     } else {
                         break;
                     }
                 }
 
                 // Bail when done
-                if (toDelete <= 0) {
+                /*if (toDelete <= 0) {
                     break;
-                }
+                } */
             }
 		}
 		return true;
