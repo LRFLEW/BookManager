@@ -10,7 +10,20 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class Plugin extends JavaPlugin {
+public class BMPlugin extends JavaPlugin {
+	
+	VaultHook econ;
+	
+	@Override
+	public void onEnable() {
+		econ = new VaultHook();
+		getConfig();
+	}
+	
+	@Override
+	public void onDisable() {
+		econ = null;
+	}
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label,
@@ -34,7 +47,7 @@ public class Plugin extends JavaPlugin {
 		
 		if (name.equals("loadbook")) {
 			if (args.length < 1) return false;
-			BookSave.loadBook(player, getDataFolder(), args[0]);
+			BookSave.loadBook(econ, player, getDataFolder(), args[0]);
 			return true;
 		}
 		
@@ -53,7 +66,10 @@ public class Plugin extends JavaPlugin {
 			}
 			
 			if (!player.hasPermission("bookmanager.copybook.free")) {
-				if (BookMakeUse.useMaterials(player, times)) return true;
+				if (getConfig().getBoolean("copy-mat"))
+					if (BookMakeUse.useMaterials(player, times)) return true;
+				double d = getConfig().getDouble("copy-cost");
+				if (d > 0) econ.spendMoney(player, d);
 			}
 			
 			

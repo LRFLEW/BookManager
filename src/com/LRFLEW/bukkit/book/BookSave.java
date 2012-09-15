@@ -11,21 +11,11 @@ import net.minecraft.server.NBTTagString;
 
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.Configuration;
-import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 
 public class BookSave {
-	private static final Configuration defCon = new MemoryConfiguration();
-	
-	static {
-		defCon.set("title", "Titleless");
-		defCon.set("author", "Herobrine");
-		defCon.set("avaiable", false);
-		defCon.set("free", false);
-	}
 	
 	public static void saveBook (NBTTagCompound tc, File dir,
 			CommandSender sender, String name) {
@@ -38,9 +28,11 @@ public class BookSave {
 			folder.mkdirs();
 			
 			YamlConfiguration yc = new YamlConfiguration();
-			yc.addDefaults(defCon);
 			yc.set("title", tc.getString("title"));
 			yc.set("author", tc.getString("author"));
+			yc.set("available", false);
+			yc.set("mat", true);
+			yc.set("cost", 0);
 			yc.save(new File(folder, "conf.yml"));
 			
 			NBTTagList pages = tc.getList("pages");
@@ -89,26 +81,20 @@ public class BookSave {
 		YamlConfiguration yc;
 		for (File f : dir.listFiles()) {
 			if (!f.isDirectory() || !new File(f, "1.txt").exists()) break;
-			yc = null;
+			yc = YamlConfiguration.loadConfiguration(new File(f, "conf.yml"));
 			if (!sender.hasPermission("bookmanager.loadbook.all")) {
-				yc = YamlConfiguration.loadConfiguration(new File(f, "conf.yml"));
-				yc.setDefaults(defCon);
-				if (!yc.getBoolean("avaiable")) break;
+				if (!yc.getBoolean("avaiable", false)) break;
 			}
 			builder.append(f.getName());
 			if (!sender.hasPermission("bookmanager.loadbook.free")) {
-				if (yc == null) {
-					yc = YamlConfiguration.loadConfiguration(new File(f, "conf.yml"));
-					yc.setDefaults(defCon);
-				}
-				if (yc.getBoolean("free")) builder.append(" (free)");
+				if (yc.getBoolean("free", false)) builder.append(" (free)");
 			}
 			builder.append(", ");
 		}
 		sender.sendMessage(builder.toString());
 	}
 	
-	public static void loadBook (Player player, File dir, String name) {
+	public static void loadBook (VaultHook econ, Player player, File dir, String name) {
 		
 		File folder = new File(dir, name);
 		if (!folder.exists()) {
@@ -118,21 +104,22 @@ public class BookSave {
 		
 		YamlConfiguration yc = YamlConfiguration.loadConfiguration(
 				new File(folder, "conf.yml"));
-		yc.setDefaults(defCon);
-		if (!yc.getBoolean("avaiable") && 
+		if (!yc.getBoolean("avaiable", false) && 
 				!player.hasPermission("bookmanager.loadtxt.all")) {
 			player.sendMessage("You cannot access that book, sorry :(");
 			return;
 		}
-		if (!yc.getBoolean("free") && 
-				!player.hasPermission("bookmanager.loadtxt.free")) {
-			if (BookMakeUse.useMaterials(player, 1)) return;
+		if (!player.hasPermission("bookmanager.loadtxt.free")) {
+			if (yc.getBoolean("mat"))
+				if (BookMakeUse.useMaterials(player, 1)) return;
+			double d = yc.getDouble("cost");
+			if (d > 0) econ.spendMoney(player, d);
 		}
 		
 		NBTTagCompound tc = new NBTTagCompound();
 		
-		tc.setString("title", yc.getString("title"));
-		tc.setString("author", yc.getString("author"));
+		tc.setString("title", yc.getString("title", "Titleless"));
+		tc.setString("author", yc.getString("author", "Herobrine"));
 		
 		NBTTagList pages = new NBTTagList();
 		File page;
