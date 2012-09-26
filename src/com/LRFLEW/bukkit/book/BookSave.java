@@ -83,7 +83,7 @@ public class BookSave {
 			if (!f.isDirectory() || !new File(f, "1.txt").exists()) break;
 			yc = YamlConfiguration.loadConfiguration(new File(f, "conf.yml"));
 			if (!sender.hasPermission("bookmanager.loadbook.all")) {
-				if (!yc.getBoolean("avaiable", false)) break;
+				if (!yc.getBoolean("available", false)) break;
 			}
 			builder.append(f.getName());
 			if (!sender.hasPermission("bookmanager.loadbook.free")) {
@@ -104,7 +104,7 @@ public class BookSave {
 		
 		YamlConfiguration yc = YamlConfiguration.loadConfiguration(
 				new File(folder, "conf.yml"));
-		if (!yc.getBoolean("avaiable", false) && 
+		if (!yc.getBoolean("available", false) &&
 				!player.hasPermission("bookmanager.loadtxt.all")) {
 			player.sendMessage("You cannot access that book, sorry :(");
 			return;
