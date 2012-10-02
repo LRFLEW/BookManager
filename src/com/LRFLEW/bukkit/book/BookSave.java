@@ -146,5 +146,4 @@ public class BookSave {
 		player.getInventory().addItem(is);
 		
 	}
-	
 }

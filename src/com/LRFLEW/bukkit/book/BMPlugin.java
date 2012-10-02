@@ -53,8 +53,16 @@ public class BMPlugin extends JavaPlugin {
 		
 		ItemStack is = player.getItemInHand();
 		if (!is.getType().equals(Material.WRITTEN_BOOK)) return false;
-		
-		if (name.equals("copybook")) {
+
+        CraftItemStack cis = (CraftItemStack) is;
+        NBTTagCompound tc = cis.getHandle().getTag();
+
+        if (name.equals("copybook")) {
+            String author = tc.getString("author");
+            if(!sender.getName().equals(author) && !sender.hasPermission("bookmanager.copy.other")){
+                sender.sendMessage("You don't have permission to copy other people's books");
+                return true;
+            }
 			int times = 1;
 			if (args.length >= 1) {
 				try {
@@ -71,16 +79,12 @@ public class BMPlugin extends JavaPlugin {
 				double d = getConfig().getDouble("copy-cost");
 				if (d > 0) econ.spendMoney(player, d);
 			}
-			
-			
+
 			for (int i=0; i < times; i++) player.getInventory().addItem(is.clone());
 			sender.sendMessage("Written Book has been copied " + times + " times");
 			return true;
 		}
-		
-		CraftItemStack cis = (CraftItemStack) is;
-		NBTTagCompound tc = cis.getHandle().getTag();
-		
+
 		if (name.equals("unsign")) {
 			if (!player.getName().equals(tc.getString("author"))
 					&& !player.hasPermission("bookmanager.unsign.other")) {
