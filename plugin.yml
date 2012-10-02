@@ -1,6 +1,6 @@
 name: BookManager
 version: 0.3
-main: com.LRFLEW.bukkit.book.Plugin
+main: com.LRFLEW.bukkit.book.BMPlugin
 author: LRFLEW
 description: Allows players to edit their Written Books
 
@@ -78,6 +78,11 @@ permissions:
     default: true
   bookmanager.copy.free:
     description: allows player to use /copybook without extra materials
+    default: op
+    children:
+      bookmanager.copy: true
+  bookmanager.copy.other:
+    description: allows player to use /copybook on other player's books
     default: op
     children:
       bookmanager.copy: true
