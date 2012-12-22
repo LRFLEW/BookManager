@@ -1,13 +1,11 @@
 package com.LRFLEW.bukkit.book;
 
-import net.minecraft.server.NBTTagCompound;
-
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class BMPlugin extends JavaPlugin {
@@ -53,13 +51,10 @@ public class BMPlugin extends JavaPlugin {
 		
 		ItemStack is = player.getItemInHand();
 		if (!is.getType().equals(Material.WRITTEN_BOOK)) return false;
-
-        CraftItemStack cis = (CraftItemStack) is;
-        NBTTagCompound tc = cis.getHandle().getTag();
+        BookMeta book = (BookMeta) is.getItemMeta();
 
         if (name.equals("copybook")) {
-            String author = tc.getString("author");
-            if(!sender.getName().equals(author) && !sender.hasPermission("bookmanager.copy.other")){
+            if(!sender.getName().equals(book.getAuthor()) && !sender.hasPermission("bookmanager.copy.other")){
                 sender.sendMessage("You don't have permission to copy other people's books");
                 return true;
             }
@@ -86,36 +81,39 @@ public class BMPlugin extends JavaPlugin {
 		}
 
 		if (name.equals("unsign")) {
-			if (!player.getName().equals(tc.getString("author"))
+			if (!player.getName().equals(book.getAuthor())
 					&& !player.hasPermission("bookmanager.unsign.other")) {
 				sender.sendMessage(
 						"You don't have permission to unsign other people's books");
 				return true;
 			}
 			is.setType(Material.BOOK_AND_QUILL);
-			tc.remove("author");
-			tc.remove("title");
+            book.setAuthor(null);
+            book.setTitle(null);
+            is.setItemMeta(book);
 			sender.sendMessage("The book has been successfully unsigned");
 			
 		} else {
 			if (args.length < 1) return false;
 			
 			if (name.equals("rnbook")) {
-				if (!player.getName().equals(tc.getString("author"))
+				if (!player.getName().equals(book.getAuthor())
 						&& !player.hasPermission("bookmanager.rnbook.other")) {
 					sender.sendMessage(
 							"You don't have permission to rename other people's books");
 					return true;
 				}
-				tc.setString("title", args[0]);
-				sender.sendMessage("The book has been successfully renamed");
+				book.setTitle(args[0]);
+                is.setItemMeta(book);
+                sender.sendMessage("The book has been successfully renamed");
 				
 			} else if (name.equals("rnauth")) {
-				tc.setString("author", args[0]);
-				sender.sendMessage("The book's author has been successfully changed");
+				book.setAuthor(args[0]);
+                is.setItemMeta(book);
+                sender.sendMessage("The book's author has been successfully changed");
 				
 			} else if (name.equals("savebook")) {
-				BookSave.saveBook(tc, getDataFolder(), sender, args[0]);
+				BookSave.saveBook(book, getDataFolder(), sender, args[0]);
 				return true;
 			}
 		}

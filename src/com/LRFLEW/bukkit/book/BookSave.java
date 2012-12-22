@@ -4,20 +4,18 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-
-import net.minecraft.server.NBTTagCompound;
-import net.minecraft.server.NBTTagList;
-import net.minecraft.server.NBTTagString;
+import java.util.List;
 
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
 
 public class BookSave {
 	
-	public static void saveBook (NBTTagCompound tc, File dir,
+	public static void saveBook (BookMeta book, File dir,
 			CommandSender sender, String name) {
 		try {
 			File folder = new File(dir, name);
@@ -28,23 +26,23 @@ public class BookSave {
 			folder.mkdirs();
 			
 			YamlConfiguration yc = new YamlConfiguration();
-			yc.set("title", tc.getString("title"));
-			yc.set("author", tc.getString("author"));
+			yc.set("title", book.getTitle());
+			yc.set("author", book.getAuthor());
 			yc.set("available", false);
 			yc.set("mat", true);
 			yc.set("cost", 0);
 			yc.save(new File(folder, "conf.yml"));
 			
-			NBTTagList pages = tc.getList("pages");
-			String[] book = new String[pages.size()];
-			for (int i=0; i < book.length; i++) {
-				book[i] = pages.get(i).toString();
+			List<String> pages = book.getPages();
+			String[] bookContents = new String[pages.size()];
+			for (int i=0; i < bookContents.length; i++) {
+				bookContents[i] = pages.get(i).toString();
 			}
-			for (int i=0; i < book.length; i++) {
+			for (int i=0; i < bookContents.length; i++) {
 				File page = new File(folder, (i + 1) + ".txt");
 				page.createNewFile();
 				FileWriter fw = new FileWriter(page);
-				fw.write(book[i]);
+				fw.write(bookContents[i]);
 				fw.close();
 			}
 			sender.sendMessage("Book successfuly saved");
@@ -115,13 +113,14 @@ public class BookSave {
 			double d = yc.getDouble("cost");
 			if (d > 0) econ.spendMoney(player, d);
 		}
-		
-		NBTTagCompound tc = new NBTTagCompound();
-		
-		tc.setString("title", yc.getString("title", "Titleless"));
-		tc.setString("author", yc.getString("author", "Herobrine"));
-		
-		NBTTagList pages = new NBTTagList();
+
+        ItemStack is = new ItemStack(Material.WRITTEN_BOOK, 1);
+        player.getInventory().addItem(is);
+        BookMeta book = (BookMeta) is.getItemMeta();
+
+		book.setTitle(yc.getString("title", "Titleless"));
+        book.setAuthor(yc.getString("author", "Herobrine"));
+
 		File page;
 		for (int i=1; (page = new File(folder, i + ".txt")).exists(); i++) try {
 			int len;
@@ -135,15 +134,10 @@ public class BookSave {
 			} finally {
 				reader.close();
 			}
-			pages.add(new NBTTagString(null, builder.toString()));
+            book.addPage(builder.toString());
 		} catch (IOException e) {
 			player.sendMessage("Unable to load the book (IOException)");
 			return;
 		}
-		tc.set("pages", pages);
-		CraftItemStack is = new CraftItemStack(Material.WRITTEN_BOOK, 1);
-		is.getHandle().setTag(tc);
-		player.getInventory().addItem(is);
-		
 	}
 }

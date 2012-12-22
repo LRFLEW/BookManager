@@ -1,5 +1,5 @@
 name: BookManager
-version: 0.3
+version: 0.4
 main: com.LRFLEW.bukkit.book.BMPlugin
 author: LRFLEW
 description: Allows players to edit their Written Books

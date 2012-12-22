@@ -1,7 +1,6 @@
 package com.LRFLEW.bukkit.book;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -30,38 +29,7 @@ public class BookMakeUse {
 	}
 	
 	public static boolean hasItems(Inventory inv, int times, ItemStack... items) {
-		
-		for (ItemStack is : items) {
-			ItemStack item = is.clone();
-			item.setAmount(is.getAmount() * times);
-            int toDelete = item.getAmount();
-            CraftInventory cinv = (CraftInventory) inv;
-
-            while (true) {
-                int first = cinv.first(item, false);
-
-                // Drat! we don't have this type in the inventory
-                if (first == -1) {
-                    return false;
-                } else {
-                    ItemStack itemStack = inv.getItem(first);
-                    int amount = itemStack.getAmount();
-
-                    if (amount < toDelete) {
-                        return false;
-                    } else {
-                        break;
-                    }
-                }
-
-                // Bail when done
-                /*if (toDelete <= 0) {
-                    break;
-                } */
-            }
-		}
-		return true;
-		
+        return (inv.contains(Material.BOOK, times) && inv.contains(Material.INK_SACK, times) && inv.contains(Material.FEATHER, times));
     }
 	
 }
