@@ -115,9 +115,7 @@ public class BookSave {
 		}
 
         ItemStack is = new ItemStack(Material.WRITTEN_BOOK, 1);
-        player.getInventory().addItem(is);
         BookMeta book = (BookMeta) is.getItemMeta();
-
 		book.setTitle(yc.getString("title", "Titleless"));
         book.setAuthor(yc.getString("author", "Herobrine"));
 
@@ -139,5 +137,7 @@ public class BookSave {
 			player.sendMessage("Unable to load the book (IOException)");
 			return;
 		}
+        is.setItemMeta(book);
+        player.getInventory().addItem(is);
 	}
 }
